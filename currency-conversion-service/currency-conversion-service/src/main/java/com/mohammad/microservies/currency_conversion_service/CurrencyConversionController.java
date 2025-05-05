@@ -12,9 +12,11 @@ import org.springframework.web.client.RestTemplate;
 public class CurrencyConversionController {
 
   private final currencyExchangeProxy proxy;
+  private final RestTemplate restTemplate;
 
-  public CurrencyConversionController(currencyExchangeProxy proxy) {
+  public CurrencyConversionController(currencyExchangeProxy proxy, RestTemplate restTemplate) {
     this.proxy = proxy;
+    this.restTemplate = restTemplate;
   }
 
   // Uncomment the following method to use Feign client
@@ -25,7 +27,7 @@ public class CurrencyConversionController {
 //    uriVariables.put("from", from);
 //    uriVariables.put("to", to);
 //
-//    ResponseEntity<CurrencyConversion> responseEntity = new RestTemplate().getForEntity(
+//    ResponseEntity<CurrencyConversion> responseEntity = restTemplate.getForEntity(
 //        "http://localhost:8000/currency-exchange/{from}/to/{to}",
 //        CurrencyConversion.class,
 //        uriVariables);

@@ -22,10 +22,9 @@ public class CurrencyExchangeController {
   }
 
   @GetMapping("/currency-exchange/{from}/to/{to}")
-  public CurrencyExchange getExchangeValue(@PathVariable String from, @PathVariable String to, @RequestHeader(value = "X-B3-TraceId", required = false) String traceId) {
+  public CurrencyExchange getExchangeValue(@PathVariable String from, @PathVariable String to) {
 
     logger.info("getExchangeValue called with {} and to {}", from, to);
-    logger.info("Received traceId: {}", traceId);
 
     CurrencyExchange exchangeValue = repository.findByFromAndTo(from, to);
 
