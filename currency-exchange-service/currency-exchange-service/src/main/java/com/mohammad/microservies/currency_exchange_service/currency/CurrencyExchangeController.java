@@ -1,10 +1,12 @@
 package com.mohammad.microservies.currency_exchange_service.currency;
 
 
-import java.math.BigDecimal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -12,6 +14,7 @@ public class CurrencyExchangeController {
 
   private final Environment environment;
   private final CurrencyExchangeRepository repository;
+  private static final Logger logger = LoggerFactory.getLogger(CurrencyExchangeController.class);
 
   public CurrencyExchangeController(Environment environment, CurrencyExchangeRepository repository) {
     this.repository = repository;
@@ -19,7 +22,10 @@ public class CurrencyExchangeController {
   }
 
   @GetMapping("/currency-exchange/{from}/to/{to}")
-  public CurrencyExchange getExchangeValue(@PathVariable String from, @PathVariable String to) {
+  public CurrencyExchange getExchangeValue(@PathVariable String from, @PathVariable String to, @RequestHeader(value = "X-B3-TraceId", required = false) String traceId) {
+
+    logger.info("getExchangeValue called with {} and to {}", from, to);
+    logger.info("Received traceId: {}", traceId);
 
     CurrencyExchange exchangeValue = repository.findByFromAndTo(from, to);
 
