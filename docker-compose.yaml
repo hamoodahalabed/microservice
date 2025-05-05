@@ -17,7 +17,7 @@ services:
 # In Docker, each service runs in its own container, so we use the Eureka container name (naming-server) to connect.
 # ENV EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://naming-server:8761/eureka/
 # Now, your service says: "Go talk to naming-server (another container), not localhost."
-
+# all above applied to zipkin server as well
   currency-conversion:
       image: mohammad3alabed/currency-conversion-service:0.0.1-SNAPSHOT
       ports:
