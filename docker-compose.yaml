@@ -1,0 +1,61 @@
+version: "3.7"
+
+services:
+  currency-exchange:
+    image: mohammad3alabed/currency-exchange-service:0.0.1-SNAPSHOT
+    ports:
+      - "8000:8000"
+    networks:
+        - currency-network
+    depends_on:
+      - naming-server
+    environment:
+    - MANAGEMENT_TRACING_SAMPLING_PROBABILITY=1.0
+    - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin-server:9411/api/v2/spans
+    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://naming-server:8761/eureka/
+# Set Eureka server URL using container name because 'localhost' won't work inside Docker containers.
+# In Docker, each service runs in its own container, so we use the Eureka container name (naming-server) to connect.
+# ENV EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://naming-server:8761/eureka/
+# Now, your service says: "Go talk to naming-server (another container), not localhost."
+
+  currency-conversion:
+      image: mohammad3alabed/currency-conversion-service:0.0.1-SNAPSHOT
+      ports:
+      - "8100:8100"
+      networks:
+      - currency-network
+      depends_on:
+      - naming-server
+      environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://naming-server:8761/eureka/
+      - MANAGEMENT_TRACING_SAMPLING_PROBABILITY=1.0
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin-server:9411/api/v2/spans
+
+  api-gateway:
+      image: mohammad3alabed/gateway-service:0.0.1-SNAPSHOT
+      ports:
+      - "8765:8765"
+      networks:
+      - currency-network
+      depends_on:
+      - naming-server
+      environment:
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://naming-server:8761/eureka/
+        - MANAGEMENT_TRACING_SAMPLING_PROBABILITY=1.0
+        - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin-server:9411/api/v2/spans
+
+  naming-server:
+    image: mohammad3alabed/naming-serve:0.0.1-SNAPSHOT
+    ports:
+      - "8761:8761"
+    networks:
+      - currency-network
+
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    ports:
+      - "9411:9411"
+    networks:
+      - currency-network
+networks:
+  currency-network:
